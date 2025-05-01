@@ -1,0 +1,19 @@
+name: Deploy Portfolio to Azure
+on: [push]  # Runs on every git push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4  # Downloads your code
+      
+      - name: Upload to Azure Blob Storage
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.40.0
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name "${{ secrets.AZURE_STORAGE_NAME }}" \
+              --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
+              --destination "${{ secrets.CONTAINER_NAME }}" \
+              --source .
